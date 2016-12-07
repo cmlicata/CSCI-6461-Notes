@@ -1,0 +1,66 @@
+Lecture 11 - Cache Coherency
+----------------------------
+
+- Cache coherency - one processor has updated a value in cache, but the change hasn't been written to memory - so other processors can get out-of-date data.
+
+- To have coherency:
+    - Any read must always return the most recent write
+        - Difficult to implement
+    - Or, any write must be eventually seen by a read
+    - And all writes are seen in their proper/sequential order (serialization)
+
+- A solution: when changing a value in the cache (and subsequently memory), signal other cache's to set the same address as invalid
+
+- Coherency Misses
+    - True sharing misses
+    - False sharing misses
+
+- Defining coherency
+    - Preserve program order
+        - Same program has the same result when executed sequentially or across processors
+    - Coherent view of memory
+    - Write serialization
+        - Two writes to the same location by any 2 processors are seen in the same order
+
+- Write Update protocol
+   - In a write-update protocol, **every write** in any of the processors needs to be <u>broadcast on the BUS and needs to update memory</u>.
+      - The writer broadcasts on the bus. The others observe the bus (snoop) and update their caches. So a single broadcast on the bus (bus activity) can result in a lot of caches doing an update.
+          - The broadcast and snooping are done **simultaneously**. A write happens, the value is broadcast and snooped and updated in the other caches. All this counts as 1 BUS access.
+          - Read-Misses count as 1 Bus access.
+
+- Write-Invalidate protocol
+    - In a write-invalidate protocol when there is an overwrite in the cache with the most up-to-date value for a block, instead of broadcasting the value to the block, all the other core's caches will set the valid bit for that block to 0, so the next read will be a MISS.
+    - On a read miss, the cache that missed will send a request to the Bus, which the block with the dirty block is listening to.
+        - When the other block sees this request it sends the correct data to the bus, and the cache that had the read miss, updates it's valid bit to 1 and both caches update their respective shared bits to 1.
+    - If you overwrite the value in a block that is shared more than once, the
+    cache that overwrote the value only broadcasts that everyone else's values are invalid once.  After that all the write updates happen locally. 
+    - The Disadvantage to the write-invalidate protocol is that there is a miss on all the readers when somebody writes.
+
+   - Write update optimizations
+      1. Avoid unnecessary Memory writes
+         - Memory can't keep up with all the writes, since in a W-U protocol you need to write to memory and the bus every write,  which makes memory the bottleneck for the system.
+         - Add a dirty bit, in addition to the valid bit and tag
+            - This dirty bit signifies 2 things:
+                1. That memory is not up to date and we need to update it
+                2. It also signifies that the processor that has it set to 1 is the only one that has the most up-to-date value
+                    - In the situation where a core's cache has the dirty bit set and another core without that value in the cache is trying to read the "up-to-date" value from memory, that processor that is reading does a **snoop read** from the the shared bus
+                      - Each time a value that is marked as dirty is updated, it stays in the cache that the value was updated in and that cache has to write it to the bus so that other caches can do a snoop read of the value.
+                     - The memory is only updated when when the block in the cache with the dirty bit set is replaced.
+                          - **i.e. one write to memory after all updates are made to value.**
+                      - One Bus hit when the block is replaced in the cache.
+      2. Reduce the number of Bus Writes
+           - Now that memory isn't being updated so much, the bus is the one that is seeing every write, so the writes to the bus will become the bottleneck in the system, because every write from every core .
+           - Now we add a shared bit, which is set to 1 when a value is shared with other cores.
+              - When a core has a value in a block in its cache, which is updated by another core's write, it sets the shared bit to 1, updates its data and lets the other core know to set the dirty and the shared bit to 1.
+                  - So now, the cache with the dirty and shared bit set to one, knows that, when it overwrites the previous value for that block, it needs to broadcast that value.
+                  - BUT, if the shared bit is set to 0, it doesn't need to broadcast the value or update memory.  But it does need to update the dirty bit, if necessary to 1.
+
+
+- Snooping Solution
+    - An updated value in cache ->
+        - Cache sends a message to all other processors' caches to ask if they have the address
+            - Caches invalidate their copies in the cache line (clears the valid flag)
+        - Requires broadcasting
+- Directory
+    - On the bus, contains all the cache lines in all the caches and their dirty/valid states
+    - Caches "ask" the directory for permission to write to memory

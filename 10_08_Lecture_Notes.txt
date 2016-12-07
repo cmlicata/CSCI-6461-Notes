@@ -1,0 +1,48 @@
+Performance
+-----------
+
+- Performance = Time(CPU) + Time(IO) - Time(Overlap)
+- Computation Time factors:
+    - Number of instructions executed = Instruction Count (not always = program size (not all instructions are executed))
+    - Avg. number of cycles per instruction (CPI)
+
+- Instruction Level Parallelism (ILP)
+    - Principle that there are many instructions in code that don't depend on each other
+    - Possible to execute those instructions in parallel
+    - Assumes multiple functional units
+    - Issues:
+            - Build a compiler to analyze code and generate alternative sequences of instructions
+            - Smart hardware that dynamically schedules instruction execution at run-time
+
+- Terminology
+    - Basic block - a set of instructions between entry points and between branches (has only one entry and exit)
+    - Loop level parallelism - parallelism that exists within a loop
+    - Loop unrolling - either the compiler or the hardware is able to exploit the parallelism inherent in a loop
+
+- Ways to improve performance:
+    - Reduce clock cycle time
+        - Technology, implementation
+    - Reduce number of instructions
+        - Improve instruction set
+        - Improve compiler
+    - Reduce cycle, instruction
+        - Improve implementation
+
+- Pipelining
+    - Mechanism for breaking a task into multiple subtask - each separate from each other - and performing the subtasks concurrently
+    - Clock divider divides clock cycles into subcycles for the pipelines to use
+    - Pipeline tries to issue a result every clock cycle
+    
+- Limits to Pipelining
+    - Structural hazards: hardware cannot support this combination of instructions
+        - Instruction in pipeline may need a resource be in use by another instruction in the pipeline
+        - Can be avoided by adding more hardware (ex. more ALUs so two adds can be done concurrently)
+    - Data hazards
+        - Instruction depends on result of another instruction still in the pipeline
+        - Data hazards due to register operands can be determined at the decode stage
+            - But those due to memory addresses can only be determined after computing the effective address
+    - Control hazards
+        - Caused by delay between fetching instructions and decisions about changes in control flow
+
+
+

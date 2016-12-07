@@ -1,0 +1,28 @@
+Lecture 3 - Instruction Set Architecture
+----------------------------------------
+
+- ISA - visible to assembly level programmers/compilers
+    - Not microinstructions
+    - Important design issue for CPU designers
+        - Features can be added to the CPU after original design is obsolete
+        - Difficult to change ISA after CPU is in production
+
+- Why not put every instruction on a chip?
+    - Real-estate on a chip - silicon budget/transistors
+        - More transistors => greater cost
+    - Can't anticipate everything people will won't
+    - Legacy support
+        - Need to support all instructions you put on a chip
+    - Complexity - hard to learn
+
+- Interpreting words
+    - Little endian -  least significant byte in smallest position
+    - Big endian - most significant byte in smallest position
+
+- Types of architectures (pros/cons in slides):
+    - Stack
+    - Accumulator
+    - Memory-Memory
+    - Register-Memory
+    - Register-Register
+

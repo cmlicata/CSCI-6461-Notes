@@ -1,0 +1,147 @@
+Lecture 13 - GPU
+----------------
+Final - MPA B07 5:20 PM - 7:20 (Lecture 4,5,7-13 (no additional material))
+    - 8 - 10 questions
+
+- Compared to processors, GPUs have a limited instruction set - only used for graphics processing
+
+- GPU history
+    - Early versions based on oscilloscope & electron gun
+    - Then, came raster displays (still used electron gun (analog))
+        - Image is represented with a "framebuffer" - a 2D array of pixels
+        - Hardware scanned the framebuffer and displayed to the screen
+            - Digital-to-analog converter to convert the pixels to analog signals for the gun
+        - Sprite based rendering, scrolling backgrounds
+
+- GPU
+    - Specialized for graphics overations
+    - Highly parallel (instead of serial)
+    - Many execution units
+        - Deeper pipelines
+        - Advanced memory interfaces
+    - Fast
+        - Slower clock speed, but more cores make up for it
+    - Grows faster than CPUs
+
+    - Separates graphics (intensive operations) from main processor
+    - DRAM, localized cache/control, and lots of cores
+
+    - Usually includes:
+        - A streaming multiprocessor:
+            - Scalar processors
+                - Local memory (cache)
+                - Code distrubuted across these processors
+                    - Different scalar processors manage different sections of the screen
+            - Shared memory
+        - DRAM (global memory)
+
+    - The scalar processors all run the same code, but operate on the data relevant to the section of the screen they're assigned
+        - Want to avoid divergent branches
+            - Code that branches heavily/unpredictably will cause code to execute slowly
+        - Threads should be as independent as possible (because each GPU core runs their own thread of the code)
+            - Minimizes communication between cores
+
+- GPU Pipeline
+    - Input assembler
+        - Takes in 1-dimensional data from up to 8 input streams
+        - Converts data to a canonical format
+            - Polygons
+            - Geometry shading
+            - Obscuration (adding depth to the picture based on the scene (from the foreground going to the background)
+                - i.e. objects should obscure those objects behind it (also called "z-cull")
+                - Getting rid of the pixels that won't be shown because they are "off-screen"
+            - Rasterization
+                - Convert the objects to pixels
+        - Pixel smoothing
+        - Output merger
+            - Sends back to main memory
+
+- Moderm GPU
+    - Vector processor operates on 4 tuple:
+        - Position (w,x,y,z)
+        - Color (red, green, blue, alpha)
+        - Texture coordinates
+
+        - Operations performed in 1 clock cycle
+            - No cache used (can slow down if cache misses occur)
+                - Too many cores, it's easier to fetch directly from memory
+    - How many:
+        - Processing units
+            - 100+
+        - ALUs
+            - 100 - 1000s
+        - Cache?
+            - None, more space for ALUs
+
+    - Each core has:
+        - Input registers
+        - FP unit
+        - integer ALU
+        - Local memory
+            - Either a block of memory associated with each core
+            - Or each has a piece of the shared memory
+        - Output registers
+
+    - GPU memory space:
+        - Global memory
+        - Constant memory  
+        - Texture memory
+
+- Programming GPUs (GPGPUs)
+    - Used to be hard to do
+        - Used graphics standard like OpenGL or NVIDIA's CUDA
+    - GPGPUs
+        - Want to use GPU to do general purpose number crunching
+            - Had to make number crunching pretend to be graphics so that the GPU could operate on them
+                - Hard
+        - Power and flexibility of GPUs make them an attractive platform for general-purpose computation
+            - Want to turn GPU into a co-processor (slave to the GPU)
+                - Also need to minimize communication over the PCIe bus
+
+- GPU vs CPU Threads
+    - Processes have their own PC and address space
+        - Threads exist within a process and have their own PC, but share the same memory (address space)
+    - GPUs don't have to do I/O, just connection to memory
+        - Simplifies the amount of information needed about a GPU thread
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

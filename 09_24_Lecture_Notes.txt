@@ -1,0 +1,96 @@
+Virtual Memory
+--------------
+- Illusion that there is more memory than the physical memory size
+    - Pages in memory are swapped out to disk when they're not being used
+
+- Why?
+    - Program sizes have grown larger than available physical memory
+        - Address space needed and seen by programs is usually larger than available memory
+    - Swapping of whole programs is cost prohibitive given relative speeds of CPU, memory, and disk
+    
+- Virtual memory
+    - First implemented in 1954 at Univ of Manchester, UK
+    - Processor emits "virtual address" from program - needs to translated to a physical memory address
+        - Memory Management Unit (MMU) does the translation
+        - Pages may need to get fetched off disk containing the requested data
+
+- Checking Memory Bounds
+    - Generate address larger than physical memory
+    or
+    - Generating an address outside address space of program (segmentation fault)
+    - Use special registers:
+        - Base register - first address of program
+        - Bounds register - base + bounds = last address of program
+
+- Memory Fragmentation
+    - As users come and go, storage become "fragmented" (little bits of free space scattered around)
+        
+- Paging
+    - Programs broken into fixed page sizes
+    - OS manages loading/storing pages into memory/from disk
+    - Page fault - when CPU refers to a location in a page which in not in memory
+        - Have to replace a page in memory
+        - May have to write "dirty" pages back to disk
+    - Each process has its own page table
+
+- Process Execution
+    - OS brings in only a few pages of the program
+    - Each page/segment table entry has a "presence bit" set if the corresponding page is in memory
+    - Resident set - the portion of the process that is in memory
+    - Interrupt generated on a page fault
+        - Instruction is retried
+    - Effectively, the OS uses main memory as a page cache.
+
+- Thrashing
+    - OS spends more time moving pages in and out of memory than it does doing computation
+   
+- Page Table
+    - Contains the physical address of each page in memory
+    - Allows a program's pages to be in memory non-contiguously 
+    - Each entry contains a present bit to indicate whether the page is in main memory or not
+        - If not in memory, the entry may contain the address of that page on disk or an index into the disk page table
+    - Single register used to hold the physical address of the page table
+    - Sometimes, the page table is stored in virtual memory
+        - But then you have to translate address to page table from a virtual address to a physical one
+
+- Sharing Pages
+    - If the same code is shared among different processes (non self-modifying), you can keep just one page in main memory
+    
+- Translation Look-aside Buffer 
+    - Like a cache for the page table
+
+- Segmentation
+    - A program is not organized in pages, but in terms of functions, subroutines, etc.
+    - Each program has its own segment table
+        - Each function can become a segment, but typically smaller functions are clumped together into segments
+    - Rather than dividing a program into fixed size pages, they're divided in variable length segments
+    - Entries in the segment table associated with a length and base field
+    - Protection bits can be set by the programmer (read only/read write/supervisor/user), whereas in paging, these bits are set by the OS.
+
+- Fetch policy
+    - Determines when a page should be brought into main memory
+    - Demand paging - only brings pages into main memory when a reference is made to a location on the page
+    - Prepaging - brings in more pages than needed
+        - Based on locality of references - may be more efficient to bring in pages that reside contiguously on the disk
+    
+- Placement Policy
+    - Determines where in real memory a process piece resides
+    - Segmentation systems:
+        - First-fit, next fit, ...
+    - Paging
+        - Hardware decides
+
+- Replacement Policy
+    - LRU, random, FIFO, clock (circular queue)
+
+- Resident Set Size
+    - How many frames to allocate to the process
+    - Increasing resident set decreases page fault rate
+    - Decrease if page fault rate is very low
+        - Too low -> thrashing
+
+- Working Set
+    - The working set for a process at time t, W(D,t), is the set of pages that have been referenced in the last D virtual time units.
+        - Virtual time - time elapsed while the process was in executed
+    - Monitored for a specific process to determine the resident set size
+    - Used to define an upper bound and lower bound for page fault rates in order to dynamically change resident set size

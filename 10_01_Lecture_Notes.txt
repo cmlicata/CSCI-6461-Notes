@@ -1,0 +1,83 @@
+Chapter 6 - I/O
+---------------
+
+- Forms of I/O:
+    - I/O mapped I/O
+        - Uses special instructions to transfer data between computer and "outside world" (ports)
+    - Memory mapped I/O
+        - Uses special memory locations in the address space of the CPU to communicate with real-world devices
+    - Direct Memory Access (DMA)
+        - DMA controller received instructions from CPU
+        - Sets up and performs transfer of data
+
+- Memory-Mapped I/O
+    - Peripheral connected to CPU address and data lines (like memory)
+        - Writing/reading to the associated addresses performs data transfer
+    - Suitable for devices that need to move large amounts of data quickly (GPUs)
+    - Issue: process writes/reads directly to the address space of the device
+    - Advantages:
+        - The CPU can use any instruction that access memory to transfer data to/from a memory-mapped I/O device
+            - i.e. don't need special instructions reserved for I/O
+    - Disadvantages:
+        - I/O consumes addresses in the memory map (lots of wasted space)
+
+- I/O mapped I/O
+    - Uses special instruction to access I/O ports
+        - Ex. IN and OUT instructions in Intel 80x86
+    - Devices/buses connected to ports
+    - Advantages:
+        - Address space not used (ports used)
+    
+    - Disadvantages
+        - You have to use special instructions to access memory
+        - Small
+        - Have to poll the ports until data in available (wastes CPU cycles)
+
+- Direct Memory Access
+    - "Old" I/O approaches needed to use multiple instructions to move large pieces of data off disk into memory (i.e. moving 1024 words requires 1024 instructions (loop))
+        - Inefficient to handle one byte at a time
+    - DMA controller introduced (extra circuitry in front of CPU memory bus)
+        - CPU sends out an address or number of words to DMA controller
+        - DMA controller handles data transfer
+            - Allows to CPU to do other work
+            - DMA controller generates an interrupt when data transfer is complete
+        - The CPU and DMA controller cannot bot use the address/data buses at the same time
+        - Allows parallelism if:
+            - CPU has a cache
+            - CPU is executing code
+            - Accesses data in the cache (leaves bus free for DMA controller)
+            
+- Interrupt-Drive System
+    - CPU has an interrupt-request line that are sensed after every instruction
+    - If an interrupt is raised, current state is saved, and control is transfered to the appropriate interrupt handler
+        - After executing, the handler performs a return from interrupt instruction
+
+- Traps
+    - A software-initiated interrupt
+    - Used to request some service from the OS
+    - Hardware-initiated traps are used for hardware faults (memory faults)
+    
+- I/O Processors
+    - Separate microprocessor-based systems that handles I/O operations
+        - Talks to device controllers, receives I/O requests to I/O processor
+
+
+
+
+- Buses
+    - Types
+        - Processor-memory
+        - I/O
+        - Backplane
+    - Set of control lines and data lines
+    - Creates a bottleneck:
+        - Physical factors: length of bus, number of devices
+        - Lots of devices increases propagation delays
+    - Synchronous buses
+        - Clock in control lines
+    - Asynchronous buses
+        - Not clocked
+        - Need a handshaking protocol - read request, data ready, ACK
+
+
+    

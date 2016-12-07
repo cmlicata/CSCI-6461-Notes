@@ -1,0 +1,77 @@
+Lecture 12 - Multicore
+----------------------
+- Technology has evolved to where multiple processors can exist on the same chip (cores)
+    - Moore's law - number of transistors doubles every few years
+- Single thread performance starting to level off
+- From single processors, multiple processors added a factor of performance
+    - But still, there's off-board communication overhead
+    - However, adding more and more functional units has diminishing return
+        - Can also increase bandwidth between functional units (bus speed)
+    - 64-bit design
+        - Is 128-bit needed?
+            - Need more cooling, more electronics on the chips (for example, larger buses)
+            - Doesn't have too many practical applications
+
+- Multicore processor
+    - A chip with multiple processors (cores).
+        - A "core" is not well-defined (does it include cache? all the functional units? etc.)
+    - Why multicore?
+        - Can't make a single core paster
+        - Cores can be made smaller
+    - Harder to program multicores
+
+    - Scales performances
+        - Multiple cores have to contend for memory and I/O bandwidth
+            - Northbridge connects cores to caches/memory (typically the bottleneck if not on-chip)
+                - Can impact perforance significantly
+            - Fewer cores will clock faster than more cores (better for single-threaded programs)
+                - But, more cores will performance better for multi-threaded programs
+    - Hyperthreading (simultaneous multithreading) - running multiple threads on a single core
+        - Process - can have files assigned to it, scheduling, I/O devices, etc.
+            - vs. a thread - scheduled within the process, contains the same Process Control Block, same set of files/I/O that belongs to the process
+                - Same address space as the process
+            - A process can have multiple threads
+        - Threads share functional units in the same core (i.e. one thread can use the floating point unit while another uses the integer unit)
+        - Often combined with multicore
+    
+    - Multiple cores don't provide a linear speedup
+        - Have to share northbridge, any shared cache
+
+    - Connectivity:
+        - Bus
+        - Ring
+        - Mesh
+
+- Multicore architectures
+    - Cores can have their own L1 cache, shared L2 and L3 caches
+    - Some may have hyperthreading, some may not
+    - Maybe separate L1 caches for instructions and data
+
+- Multicore programming
+    - OS handles scheduling to each core as if they were all separate processor
+    - Processes communicate between:
+        - Message passing
+            - Message Passing Interface (MPI)
+            - Works well on distributed systems
+                - Scales well
+        - Transactions
+            - Execution transation fully or rollback if transaction fails
+                - Atomicity
+        - Shared variables/data
+
+- Multicore challenges
+    - Effective explotation of multiple-thread parallelism
+    - Aggravates memory wall
+    - Fixed number of pins on processor
+- Multicore advantages
+    - Cache coherency is easier (its all on the chip)
+    - Communication between CPUs travel shorter distances
+        - Higher quality systems allow more data to be sent
+    - Power usage is not linear by adding more cores
+- Multicore disadvantages
+    - Application performance increases depends on multithreading
+    - Still limited by other things (memory bandwidth, for example)
+
+
+
+

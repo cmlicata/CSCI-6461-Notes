@@ -1,0 +1,111 @@
+Lecture 4 - Memory and Cache
+----------------------------
+- Cost, locality, and speed
+
+- Memory Hierarchy
+    - Processor -> Cache Levels (L1, L2, etc.) -> Main Memory -> Secondary Memory (disks)
+    - Main memory slower than processor
+        - Faster memory => cost
+        - High decoding times, etc. => larger memory is slower
+
+        - Want CPU to get data as fast as possible:
+            - Solution: Implement cache
+
+- Memory History
+    - Mercury/acoustic delay lines - memory in the form of electrical pulses transduced into mechanical waves
+    - Magnetic drum, vacuum tubes
+    - CRT
+    - Magnetic cores
+    - Semiconductor
+        - (D)ynamic RAM
+            - Needs cells recharged every few microseconds
+        - (S)tatic RAM
+            - Doesn't need recharge
+- Parity vs. Non-Parity
+    - Even vs. odd parity
+    - Parity not done much anymore - memory has become relatively reliable. 
+        - Used in some mission-critical systems
+
+- Modern RAM - typically 8 memory chips - one for each bit in a byte. Ninth chip for the memory controller.
+
+- Memory Interleaving/Banking
+    - Can only access one word of memory at a time
+        - Since processor is much faster than RAM (terms of clock speed), processor wastes cycles while waiting for words to be fetched from memory.
+
+    - Interleaving - distributing addresses across multiple banks
+        - Allows simultaneous (parallel) accessing of words in memory if the words are in separate banks
+        - May conflict with caching
+
+    - DIMM (Dual Inline Memory Module) - contains multiple chips
+
+- Memory System Design
+    - Locality - programs access a relatively small portion of address space at any instant of time
+    - Temporal locality - if and instruction/data is used now, there is a good chance that it will be used again in the future
+    - Spatial locality - "" then there is a good chance that the instructions or data items that are in memory following/preceding will soon be used
+
+    - Good idea to move these instructions/data from slow memory to fast memory (cache)
+        - This prediction will not always be correct
+        - Today, caches are > 75% successful
+
+- Cache
+    - Small, fast memory
+    - Arranged in blocks
+        - Block from memory loaded into a cache line
+        - When processor emits an EA, the address goes to the cache - cache controller checks cache lines = HIT
+            - Else MISS - need to go to main memory, add the block to cache and reinitiate the cache check
+            - Processor <--> Cache <--> Memory
+    - Cache comprised of cache lines - each with an address tag and data
+        - Address tag - like an array base index based on word boundary
+            - i.e. 00001XXX, 00002XXX, 00003XXX, where XXX would be the index into the data blocks at a specific address tag
+
+- Cache Performance
+    - Memory access time = cache hit time OR cache miss rate * miss penalty
+    - Types of misses:
+        - Compulsory - always occurs the first time.
+        - Capacity - reduce with increase in capacity size.
+            - Need to push something out of the cache.
+        - Conflict - reduce with level of associativity. 
+
+- Cache Topology
+    - Initially, both instructions and data were stored in the same cache (unified)
+        - Since then, compilers have split up address and data space
+        - Created split caches
+        - Need to keep track of base address and base data
+
+- Cache Writing
+    - Write Buffer needed between cache and memory
+        - Used to update memory/cache
+            - Write-through - when you update the cache, update the memory
+                - Memory is slower than the cache - memory is out of sync for small amount of time
+                - Use a writing buffer to write to memory when the memory controller determines memory is idle.
+                    - Requires extra electronics for the buffer
+                - Have enough data/instructions in cache so memory can go idle for a time
+            - Write-back - Don't update memory until the cache line needs to be replaced (using dirty bit)
+
+- Caching Algorithms
+    - Fully associative - a block in memory can be placed on any cache line 
+    - 2-way Set Associative - a block in memory is mapped to a specific set of cache lines  (memory % num sets)
+    - Direct map - a block is memory is mapped to a single cache line (memory % num cache lines)
+
+- Cache Replacement on Cache Miss and Full Cache
+    - Easy for direct map - just replace the cache line that the new memory block should go to
+    - Algorithms:
+        - Least Recently Used - look for oldest time stamp
+        - FIFO
+        - Least Frequently Used - look at counter
+        - Random
+
+        - LRU most efficient, simple to implement with good results
+        - FIFO is simple to implement
+        - Random is simplest to implement and has surprisingly good results
+
+    - Special bits
+        - Dirty bit - designates modified cache line (has to be written to memory)
+        - Valid bit - specifies whether a given cache line is related to a currently executing program
+
+- Cache Optimizations
+    - Reducing hit time
+    - Increasing cache bandwidth
+    - Reducing miss penalty
+    - Reducing miss rate
+    - Reducing miss penalty or miss rate via parallelism 

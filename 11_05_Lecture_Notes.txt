@@ -1,0 +1,108 @@
+Lecture 10 - Multiprocessors
+----------------------------
+- Term paper grade < 18, can redo with comments
+- Lectures 1-3,6 not on the final (Lectures 4,5,7-13 on the final)
+
+- Multiple processors inter connected
+    - Good for timesharing
+    - Hard to write good concurrent programs; many failures
+
+- Paradigms:
+    - Parallel Computing - simultaneous use of multiple processors. All within the same architecture.
+    - Distributed Computing - network of processors connected by some medium
+    - Concurrent Computing - both of the above
+
+- Parallelism Types
+    - Job level
+    - Task level
+    - ISP/TLP
+    - Instruction Level
+        - Multiple functional units
+    - Arithmetic/bit level
+        - Multiple ALU
+
+- Efficiency
+    - Speedup factor will never equal the number of processes (communication of overhead)
+    - Typically, 80% of the computation is done in 20% of the instructions (other 80% is I/O)
+
+- Limitations of Multiprocessors
+    - Legacy code needs to be rewritten/parallelized
+    - Retraining programmers to program multicores 
+        - OS/compiler takes care of it
+
+- Flynn's Hardware Taxonomy
+    - Organizing processors into categories
+    - Instruction & data streams
+        - Single or multiple streams
+    - Johnson's Expansion   
+        - Includes IPC (shared memory/message passing)
+
+    - Single Instruction Stream Single Data Stream (SISD)
+        - Uniprocessor
+        - Pipelining is applicable
+    - Single Instruction Multiple Data (SIMD)
+        - Single (main) processor
+        - Vector operations are "multiple data"
+            - One vector instruction = multiple machine instructions on the data stream
+            - Pipelined vector units
+    - Multiple Instruction Single Data (MISD)
+        - Multiple processors, but single data stream
+        - Single data stream operated by multiple instruction streams
+    - Multiple Instruction Multiple Data (MIMD)
+        - Multiple processors / multi computers
+
+- Processors Couplings
+    - How do the processors communicate with each other?
+    - Tightly Coupled System
+        - Processors communicate in a synchronized fashion
+        - Shared memory communication
+    - Loosely Coupled System
+        - Asynchronous communication
+        - Message passing
+        - High overhead for data exchanged
+            - But, can be used for distributed computing
+
+- Parallelism Granularity
+    - Coarse-grained
+        - Task broken into pieces which can each be executed on a separate processor
+        - Computation/communication ratio is very high
+    - Medium-grained
+        - Tens to thousands of processors running the same code
+        - Higher computation/communication ratio
+    - Fine-grained
+        - Thousands/millions of small pieces executed by very small, simple processors or pipelines
+
+- Memory Architecture
+    - Shared (global) memory
+    - Distributed (local, message-passing) memory
+        - Memory units associated with each processors (i.e. each processor has local memory)
+        - Accessing another processor's memory requires message passing
+    - Uniform memory
+        - All processors take the same time to reach all memory locations
+    - Non-uniform memory (NUMA)
+
+- Interconnection Topologies
+    - Shared bus
+        - Hardware components share a bus that has address/data/command lines
+    - Master device
+        - Controls and initiates communication
+            - Could be a master processor or a device controller (for example, an IO controller that emits interrupts for a CPU)
+    - Slave devices
+    - Multiple master buses
+        - Gives you more bandwidth
+        
+    - Mesh architecture
+        - Processors directly connected to neighboring processors (with wrap around)
+        - Can also have nodes that manage communication/routing with each processor connected to a node
+        - Tree architectures also used
+
+    - Multiport Memory
+        - Multiple memory modules, each connected to a CPU
+    - Crossbar switch
+        - Packet-switch or circuit-switch to access a memory module
+    - Butterfly (omega) network
+        - Each bit of the destination address used to forward a packet
+
+
+
+

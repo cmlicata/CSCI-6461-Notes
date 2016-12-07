@@ -1,0 +1,82 @@
+Lecture 9 - Vector Operations
+-----------------------------
+- Final Exam - Dec. 10, MPA B07 - 5:20 - 7:20 PM
+- Part 4 - due Dec. 14 (midnight) Sunday
+___
+- Seymour Cray - Cray (vector) computers, improved end-end speed of computers
+
+- Improving Performance
+    - Vectors - collections of like-numbers
+        - Performance can be improved if we structure hardware to deal with vectors
+        - Vectors have consistent patterns:
+            - Vector instructions access memory with a known pattern
+            - No data cache required - want to do block operations
+- Vector Computer
+    - Vector register - fixed-length bank (commonly 64 elements) holding a single vector
+        - Usually comprised of normal GP registers and floating point registers
+        - Provide input data to vector functional units
+    - Vector functional unit - fully pipelined, can start a new operation on every cycle
+    - Vector load/store unit - loads or stores a vector to or from vector
+        - Does a block move to fetch the vector from memory in one instruction
+    - Vector length control - Natural length of the vector (how many elements need to be operated on)
+
+    - Types of vector processors
+        - Vector-Registers
+            - Most common
+            - All vector operations occur in the vector registers
+            - Vector counterpart of a load-store architecture
+        - Memory-Memory processors
+            - All vectors instructions operate on memory
+            - Comparatively slower (memory slower than CPU)
+    - Most common floating/vector operation -> S = ax + b
+
+    - Vector processor internals
+        - A scalar processor
+            - Scalar registers/functional units
+        - Vector register file
+        - Pipelined vector functional units
+        - Types of addressing
+            - Unit stride
+                - Increment index by 1 for every loop (will process every element in the vector)
+                - Fastest, easiest to optimize
+            - Non-unit (constant) stride
+                - Incrementing index by x for every loop (will process every xth element)
+                    - ex: stride 2 = every other element
+                - Harder to optimize for all possible strides
+            - Indexed (gather-scatter)
+                - Essentially register indirect with vectors
+                - Uses two vectors
+                    - Pulling a value from the first vector is used as the index into the second vector
+                    - First vector processed according to the stride value 
+                - Good for sparse arrays of data
+                - Gather = load, scatter = store
+
+- Vector Terminology
+    - Vector Start-up Time - How long it takes to start up the vector pipeline
+        - i.e. number of cycles required prior to the generation of the first result
+            - Afterwards, a result is generated for every cycle
+        - Lots of overhead for vectors with a low number of elements (ex. 10 cycle startup to process a 4 element vector)
+            - Negligible overhead for vectors with a high number of elements
+
+- Issues
+    - If the length of the vector is greater than the length of the vector registers -> need multiple loads (strip mining)
+    - Computations that have both vector and scalar components
+        - Scalar components are non-vectorizable
+        - Need to separate scalar from vector computations
+
+- Vectorizable Code Characteristics
+    - Vectorization can only be done within a do/for loop (innermost)
+    - Need enough iterations in the DO loop to offset the start-up time overhead
+    - Compiler needs to be able to vectorize code
+
+- Vector Mask
+    - Vector mask register - one bit for each element in the vector register
+        - Used to mask off elements in the vector register for a subsequent vector copy or store
+        - Bits can be set based on a conditional (i.e. flag all bits in the vector that are > 0)
+            - Can be set dynamically during computation
+
+- Vector Disadvantages
+    - Do we need vector instructions when we now have multiple cores/processors?
+    - High price of on-chip vector memory systems
+    - Increased code complexity
+
